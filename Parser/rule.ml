@@ -3,10 +3,10 @@ class rule = object(self)
 	val mutable right = ( [] : string list )
 	
 	method newRule (l:string) (r:string list) =
-		if l != "" && l != "S'" then
+		if l != "" then
 			left  <- l
 		else
-			failwith "The left side of a rule can't be empty nor S'.";
+			failwith "The left side of a rule can't be empty.";
 		if List.length r > 0 then
 			right <- r
 		else

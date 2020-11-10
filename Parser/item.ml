@@ -32,6 +32,12 @@ class item = object(self)
 	method isExplored () =
 		explored
 	
+	method clone (i:item) =
+		rule <- i#getRule ();
+		index <- i#getIndex ();
+		explored <- i#isExplored ();
+		self
+	
 	method equals (i:item) =
 		if index != i#getIndex () then
 			false

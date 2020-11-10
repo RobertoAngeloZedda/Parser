@@ -14,6 +14,8 @@ Format.printf "hs1#addAll [\"B\"; \"C\"; \"C\"]\n\n";;
 
 Format.printf "hs1: %s\n" (hs1#toString ());;
 Format.printf "hs1#size () = %i\n" (hs1#size ());;
+Format.printf "hs1#getIndex \"C\" = %i\n" (hs1#getIndex "C");;
+Format.printf "hs1#getItem 1 = %s\n" (hs1#getItem 1);;
 hs1#remove "A";;
 Format.printf "hs1#remove \"A\"\n\n";;
 
@@ -46,6 +48,8 @@ Format.printf "hs2#addAll [D -> E; D -> E; F -> G H I]\n\n";;
 
 Format.printf "hs2: %s\n" (hs2#toString ());;
 Format.printf "hs2#size () = %i\n" (hs2#size ());;
+Format.printf "hs2#getIndex F -> G H I = %i\n" (hs2#getIndex r3);;
+Format.printf "hs2#getItem 1 = %s\n" ((hs2#getItem 1)#toString ());;
 hs2#remove (r1);;
 Format.printf "hs2#remove A -> B C\n\n";;
 

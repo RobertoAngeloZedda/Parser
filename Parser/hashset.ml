@@ -60,6 +60,22 @@ class ['a] hashset ( eq : 'a -> 'a -> bool ) ( str : 'a -> string ) = object(sel
 				else
 					false
 		in loop l
+		
+	method getIndex (i:'a) = 
+		let rec loop (l:'a list) (c:int) = match l with
+			| []     -> -1
+			| h :: t ->
+				if eq h i then
+					c
+				else
+					loop t (c+1)
+		in loop items 0
+	
+	method getItem (i:int) =
+		let rec loop (l:'a list) (i:int) = match l with
+			| []     -> failwith "hashset - out of bound"
+			| h :: t -> if i = 0 then h else loop t (i-1)
+		in loop items i
 	
 	method toList () =
 		items

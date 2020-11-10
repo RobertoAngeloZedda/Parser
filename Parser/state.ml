@@ -49,6 +49,12 @@ class state = object(self)
 	method getReachableItems () =
 		reachableItems
 	
+	method getSourceItemsAsList () =
+		sourceItems#toList ()
+	
+	method getReachableItemsAsList () =
+		reachableItems#toList ()
+	
 	method getCurrentSymbols () =
 		let rec loop (l:item list) (hs:string hashset) = match l with
 			| []     -> hs#toList ()
