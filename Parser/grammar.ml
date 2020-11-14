@@ -23,6 +23,9 @@ class grammar = object(self)
 	
 	val mutable terminals = new hashset
 		(fun x y -> x = y) (fun x -> x)
+		
+	val mutable terminalRegexp = 
+		( [] : (string * string) list )
 	
 	method getRulesWithPrio () =
 		rulesWithPrio
@@ -76,10 +79,25 @@ class grammar = object(self)
 	method isTerminal (s:string) =
 		terminals#contains s
 		
+	method getTerminalRegexp () =
+		terminalRegexp
+		
+	method getRegexp (name:string) =
+		let rec loop (l:(string*string) list) = match l with
+			| []     ->
+				failwith "grammar - No regexp with this name"
+			| (n, r) :: t ->
+				if n = name then
+					r
+				else
+					loop t
+		in loop terminalRegexp
+		
 	method newGrammar (l:(rule * int) list) 
 		              (genericSymbol:string)
 					  (basicTypes:(string*string) list) =
 		rulesWithPrio#addAll l;
+		terminalRegexp <- basicTypes;
 
 		(* Creo una lista che contiene tutte le priorita' 
 		   senza ripetizioni e ordinate in ordine crescente *)
@@ -179,6 +197,16 @@ class grammar = object(self)
 				variables#add (hr#getLeft ());
 				createGenericRules t
 		in createGenericRules l;
+		
+		(* Creo le regole per i tipi terminali *)
+		let rec createBasicTypeRules (l:(string*string) list) = match l with
+			| []          -> ()
+			| (n, r) :: t ->
+				rules#add ((new rule)#newRule n [r]);
+				variables#add n;
+				createBasicTypeRules t
+		in createBasicTypeRules basicTypes;
+		
 		self
 	
 	method getRulesByVariable (s:string) =
@@ -226,6 +254,17 @@ class grammar = object(self)
 		else if self#isPrioritySymbol s then
 			loopPrioSymbols
 				((self#prioritiesAsHashsetSymbols ())#toList ()) s
+		else if self#isTerminal s then
+			let rec getLastPrio (l:int list) = match l with
+				| []      -> 
+					failwith "grammr - no priorities"
+				| h :: [] ->
+					h
+				| h :: t  ->
+					getLastPrio t
+			in loopPrioSymbols
+				((self#prioritiesAsHashsetSymbols ())#toList ())
+				("PRIO" ^ string_of_int (getLastPrio priorities))
 		else if self#isVariable s then ( 
 			loopPrioSymbols 
 				((self#prioritiesAsHashsetSymbols ())#toList ()) 
