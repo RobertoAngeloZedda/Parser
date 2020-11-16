@@ -19,5 +19,5 @@ let g = (new grammar)#newGrammar [
 
 let p = (new parser)#newParser g;;
 
-Format.printf "\n%s\n" 
+Format.printf "\n%s\n\n" 
 	(p#parse (p#programFromFile ("programma.txt")));;

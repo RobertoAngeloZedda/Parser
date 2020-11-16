@@ -142,18 +142,18 @@ class parser = object(self)
 				if (h#isExplored ()) then (
 					if symbol = "" || grammar#isEndingSymbol ((h#getRule ())#getLeft ()) symbol then (
 						if grammar#isPrioritySymbol ((h#getRule ())#getLeft ()) then (
-							Format.printf "\t\t..di priorita'\n";
+							(*Format.printf "Creo una regola di priorita' ";*)
 							let _ = stateStack#pop () in ();
-							Format.printf "\t\t(restituisco %s)\n" ((h#getRule ())#getLeft ());
+							(*Format.printf "(restituisco %s)\n" ((h#getRule ())#getLeft ());*)
 							(h#getRule ())#getLeft ()
 						)
 						else if grammar#isTerminal ((h#getRule ())#getLeft ()) then (
 							let term = symbolStack#popGet () in
-							Format.printf "\t\t..di un terminale (%s)\n" term;
+							(*Format.printf "Creo una regola di un terminale (%s) " term;*)
 							let rec loopBasicTypes (l:(string*string) list) = match l with
 								| (n, r) :: t ->
 									if (h#getRule ())#getLeft () = n && Str.string_match (Str.regexp r) term 0 then (
-										Format.printf "\t\t(restituisco %s)\n" ((h#getRule ())#getLeft ());
+										(*Format.printf "(restituisco %s)\n" ((h#getRule ())#getLeft ());*)
 										let _ = symbolStack#pop () in
 										let _ = stateStack#pop () in
 										symbolStack#push (n ^ "(" ^ term ^ ")");
@@ -165,7 +165,7 @@ class parser = object(self)
 							in loopBasicTypes (grammar#getTerminalRegexp ())
 						)
 						else if grammar#isVariable ((h#getRule ())#getLeft ()) then (
-							Format.printf "\t\t..di un operazione\n";
+							(*Format.printf "Creo una regola di un operazione ";*)
 							let rec loopRight (l:string list) = match l with
 								| []      -> ")"
 								| h :: [] ->
@@ -185,7 +185,7 @@ class parser = object(self)
 								(h#getRule ())#getLeft () ^ "(" ^
 								loopRight ((h#getRule ())#getRight ())
 							);
-							Format.printf "\t\t(restituisco %s)\n" ((h#getRule ())#getLeft ());
+							(*Format.printf "(restituisco %s)\n" ((h#getRule ())#getLeft ());*)
 							(h#getRule ())#getLeft ()
 						)
 						else (
@@ -202,13 +202,13 @@ class parser = object(self)
 	
 	method parse (l:string list) =
 		let rec loop (input:string list) = 
-			Format.printf "stateStack: %s\n" (stateStack#toString ());
-			Format.printf "symbolStack: %s\n\n" (symbolStack#toString ());
+			(*Format.printf "stateStack: %s\n" (stateStack#toString ());*)
+			(*Format.printf "symbolStack: %s\n\n" (symbolStack#toString ());*)
 			match input with
 			| [] ->
-				Format.printf "symbol \"$\"\n";
+				(*Format.printf "symbol \"$\"\n";*)
 				if self#isEnd (stateStack#popGet ()) then (
-					Format.printf "Concludo\n\n";
+					(*Format.printf "Concludo\n\n";*)
 					let result = symbolStack#pop () in
 					stateStack#clear ();
 					symbolStack#clear ();
@@ -218,25 +218,23 @@ class parser = object(self)
 					let s = self#create (stateStack#popGet ()) "" in
 					if s = "" then
 						failwith "Cannot be parsed"
-					else (
-						Format.printf "Creo una regola..\n";
+					else
 						loop [s]
-					)
 				)
 			| h :: t ->
-				Format.printf "symbol \"%s\"\n" h;
+				(*Format.printf "symbol \"%s\"\n" h;*)
 				let s = self#create (stateStack#popGet ()) h in
 				if s = "" then
 					let i = self#nextState (stateStack#popGet ()) h
 					in if i = -1 then
 						failwith "Cannot be parsed"
 					else (
-						Format.printf "Mi sposto da %i a %i\n" ((stateStack#popGet ())) (i);
+						(*Format.printf "Mi sposto da %i a %i\n" ((stateStack#popGet ())) (i);*)
 						stateStack#push i;
 						loop t
 					)
 				else (
-					Format.printf "Creo una regola..\n";
+					(*Format.printf "Creo una regola..\n";*)
 					loop (s :: h :: t)
 				)
 		in stateStack#push 0;
